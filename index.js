@@ -5,8 +5,9 @@ const routes = require('./router/friends.js')
 
 let users = []
 
-// Firstly, as the intent of this application is to provide access to the API endpoints only to the authenticated users, you need to provide a way to register the users. This endpoint will be a post request that accepts username and password through the body. The user doesn't have to be authenticated to access this endpoint.
 
+
+// You need to provide a manner in which it can be checked to see if the username exists in the list of registered users, to avoid duplications and keep the username unique. This is a utility function and not an endpoint
 // Check if a user with the given username already exists
 const doesExist = (username) => {
     // Filter the users array for any user with the same username
@@ -21,6 +22,8 @@ const doesExist = (username) => {
     }
 }
 
+
+// You will next check if the username and password match what you have in the list of registered users. It returns a boolean depending on whether the credentials match or not. This is also a utility function and not an endpoint.
 // Check if the user with the given username and password exists
 const authenticatedUser = (username, password) => {
     // Filter the users array for any user with the same username and password
@@ -36,11 +39,13 @@ const authenticatedUser = (username, password) => {
 }
 
 const app = express();
-
+// You will now create and use a session object with user-defined secret, as a middleware to intercept the requests and ensure that the session is valid before processing the request.
 app.use(session({secret:"fingerpint"},resave=true,saveUninitialized=true));
 
 app.use(express.json());
 
+
+// You will now ensure that all operations restricted to auhtenticated users are intercepted by the middleware. The following code ensures that all the endpoints starting with /friends go through the middleware. It retrieves the authorization details from the session and verifies it. If the token is validated, the user is aunteticated and the control is passed on to the next endpoint handler. If the token is invalid, the user is not authenticated and an error message is returned.
 // Middleware to authenticate requests to "/friends" endpoint
 app.use("/friends", function auth(req, res, next) {
     // Check if user is logged in and has valid access token
@@ -88,6 +93,7 @@ app.post("/login", (req, res) => {
     }
 });
 
+// Firstly, as the intent of this application is to provide access to the API endpoints only to the authenticated users, you need to provide a way to register the users. This endpoint will be a post request that accepts username and password through the body. The user doesn't have to be authenticated to access this endpoint.
 // Register a new user
 app.post("/register", (req, res) => {
     const username = req.body.username;
