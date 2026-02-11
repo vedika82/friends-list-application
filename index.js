@@ -5,6 +5,8 @@ const routes = require('./router/friends.js')
 
 let users = []
 
+// Firstly, as the intent of this application is to provide access to the API endpoints only to the authenticated users, you need to provide a way to register the users. This endpoint will be a post request that accepts username and password through the body. The user doesn't have to be authenticated to access this endpoint.
+
 // Check if a user with the given username already exists
 const doesExist = (username) => {
     // Filter the users array for any user with the same username
